@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Firebase Authentication Sample</title>
+
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+</head>
+<body>
+  <h1>読み込み中です。</h1>
+  <div id="main"></div>
+
+  <script>
+      var firebaseConfig = {
+        // 上のほうで取得した apiKey 関連のコードをここに張り付ける。
+        apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+        authDomain: "xxxxxxxxxx.firebaseapp.com",
+        projectId: "xxxxxxxxxx",
+        storageBucket: "xxxxxxxxxx.appspot.com",
+        messagingSenderId: "xxxxxxxxxx",
+        appId: "xxxxxxxxxx"
+      };
+
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged( user => {
+      let h1   = document.querySelector('h1');
+      let main = document.querySelector('#main');
+
+      if ( user != null ){
+        if ( user.emailVerified == false ){
+          h1.innerText   = 'ユーザ登録をしました。';
+          main.innerHTML = user.email + 'に確認メールを送信しました。';
+          user.sendEmailVerification();
+        }else{
+          h1.innerText   = 'ログインに成功しました。';
+          main.innerHTML = user.displayName + 'さんがログインしています。';
+        }
+
+      }else{
+        h1.innerText = 'ログインに失敗しました。';
+      }
+    });
+  </script>
