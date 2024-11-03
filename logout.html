@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Firebase Authentication Sample</title>
+
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+</head>
+<body>
+  <h1>読み込み中です。</h1>
+  <div id="main"></div>
+
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
+        authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
+        projectId: "toyota-hatumei-login-0001",
+        storageBucket: "toyota-hatumei-login-0001.firebasestorage.app",
+        messagingSenderId: "528478791438",
+        appId: "1:528478791438:web:689b9d3a060dc56fbe595f",
+        measurementId: "G-54MQBV693F"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged( user => {
+      let h1   = document.querySelector('h1');
+      let main = document.querySelector('#main');
+
+      firebase.auth().signOut().then(() => {
+          h1.innerText   = 'ログアウトに成功しました。';
+          main.innerHTML = user.displayName + 'さんがログアウトしています。 <br><a half="./index.html">ログイン</a>';
+      }).catch((error) => {
+          h1.innerText   = 'ログアウトに失敗しました。';
+          main.innerHTML = '<a half="./index.html">ログイン</a>';
+      });
+    });
+  </script>
