@@ -20,6 +20,19 @@
     };
     firebase.initializeApp(config);
 
+    // 存在確認済のメールアドレスかどうか(true or false)
+    var verified = firebase.auth().currentUser.emailVerified;
+    console.log(verified);
+
+    // 未確認のメールアドレスの場合、メールを送信する
+    if (!verified) {
+        // メール送信処理
+        firebase.auth().currentUser.sendEmailVerification();
+
+        var email = firebase.auth().currentUser.email;
+        console.log('確認メールを送信しました。', email);
+    }
+
     // FirebaseUIインスタンス初期化
     var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
@@ -39,14 +52,14 @@
       },
       // リダイレクトではなく、ポップアップでサインインフローを表示
       signInFlow: 'popup',
-      signInSuccessUrl: '<url-to-redirect-to-on-success>',
+      signInSuccessUrl: 'dashboard.html',
       signInOptions: [
         // サポートするプロバイダ(メールアドレス)を指定
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.GoogleAuthProvider.PROVIDER_ID
       ],
       // Terms of service url.(サービス利用規約ページの)
-      tosUrl: '<your-tos-url>'
+      tosUrl: 'service.html'
     };
 
     // FirebaseUI描画開始
