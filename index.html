@@ -29,7 +29,7 @@
       firebase.initializeApp(firebaseConfig);
 
       var uiConfig = {
-          signInSuccessUrl: '/login.html', // ログインに成功したときに飛ぶページ
+          signInSuccessUrl: './login.html', // ログインに成功したときに飛ぶページ
           signInOptions: [
             {
               provider: firebase.auth.EmailAuthProvider.PROVIDER_ID 
@@ -37,8 +37,8 @@
             }
           ],
 
-          tosUrl: '/kiyaku.html',           // 規約とかを描いたページ
-          privacyPolicyUrl: '/policy.html'  // プライバシーポリシーを描いたページ
+          tosUrl: './kiyaku.html',           // 規約とかを描いたページ
+          privacyPolicyUrl: './policy.html'  // プライバシーポリシーを描いたページ
         };
   
         // firebase auth ui を使用
