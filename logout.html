@@ -1,39 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>Firebase Authentication Sample</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>[firebase] my-sample-project</title>
 
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
-</head>
-<body>
-  <h1>読み込み中です。</h1>
-  <div id="main"></div>
+  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
+
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
 
   <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
-        authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
-        projectId: "toyota-hatumei-login-0001",
-        storageBucket: "toyota-hatumei-login-0001.firebasestorage.app",
-        messagingSenderId: "528478791438",
-        appId: "1:528478791438:web:689b9d3a060dc56fbe595f",
-        measurementId: "G-54MQBV693F"
+    // Firebaseの初期化
+    var config = {
+      apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
+      authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
     };
-
-    firebase.initializeApp(firebaseConfig);
-
-    firebase.auth().onAuthStateChanged( user => {
-      let h1   = document.querySelector('h1');
-      let main = document.querySelector('#main');
-
-      firebase.auth().signOut().then(() => {
-          h1.innerText   = 'ログアウトに成功しました。';
-          main.innerHTML = user.displayName + 'さんがログアウトしています。 <br><a half="./index.html">ログイン</a>';
-      }).catch((error) => {
-          h1.innerText   = 'ログアウトに失敗しました。';
-          main.innerHTML = '<a half="./index.html">ログイン</a>';
-      });
+    firebase.initializeApp(config);
+    firebase.auth().signOut().then(function() {
+        document.getElementById('loader').innerText = 'サインアウトしました。<br><span>この画面は閉じても良いです。</span>';
+    }).catch(function(error) {
+        console.log(error);
+        document.getElementById('loader').innerText = 'サインアウトできませんでした。<br><span>この画面は閉じても良いです。</span>';
     });
   </script>
+</head>
+<body background="RPisystem.png">
+  <div id="firebaseui-auth-container"></div>
+  <div id="loader">Loading...</div>
+</body>
+</html>
