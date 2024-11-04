@@ -9,6 +9,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     document.getElementById('userH').innerText = user;
     console.log('auth user', user);
   } else {
-    setTimeout(function(){window.location.href = 'index.html';}, 5*1000);
+    setTimeout(function(){window.location.href = 'index.html';}, 1);
   }
 });
