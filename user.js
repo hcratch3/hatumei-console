@@ -6,7 +6,6 @@ firebase.initializeApp(config);
 
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    document.getElementById('userH').innerText = user;
     console.log('auth user', user);
   } else {
     setTimeout(function(){window.location.href = 'index.html';}, 1);
