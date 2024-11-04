@@ -8,22 +8,7 @@
 </head>
 <body background="RPisystem.png">
 
-<script>
-    var config = {
-        apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
-        authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
-    };
-    firebase.initializeApp(config);
-
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            document.getElementById('userH').innerText = user;
-            console.log('auth user', user);
-        } else {
-            
-        }
-    });
-</script>
+<script src="user.js"></script>
 
 <header>
     <h1>豊田少年少女発明クラブ | ダッシュボード (<a href="logout.html" style="color: #fff;">ログアウト</a>)</h1>
