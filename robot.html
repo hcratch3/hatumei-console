@@ -11,15 +11,14 @@
   
   <form>
     <div class="cf-turnstile" data-sitekey="0x4AAAAAAAzJujce04sJvGLQ"></div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">次に行く▷</button>
   </form>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=_turnstileCb" async defer></script>
   <script>
     function _turnstileCb() {
       turnstile.render('.cf-turnstile', {
         callback: function(token) {
-          console.log('ok!')
-          console.log(token);
+          document.querySelector("button[type='submit']").removeAttribute('disabled');
         },
       })
     }
