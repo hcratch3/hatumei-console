@@ -4,10 +4,9 @@ var config = {
 };
 firebase.initializeApp(config);
 
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    console.log('auth user', user);
+firebase.auth().onAuthStateChanged((user) => {  if (user) {
+    // ログイン状態の場合
   } else {
-    window.location.href = 'index.html';
+    // 未ログイン状態の場合
   }
 });
