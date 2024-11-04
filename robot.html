@@ -19,22 +19,17 @@
   </style>
 </head>
 <body background="RPisystem.png">
-  <h1>ロボット🤖を倒すのを手伝ってください!</h1>
+  <main>
+    <div class="content">
+      <h1>ロボット🤖を倒すのを手伝ってください!</h1>
   
-  <form action="dashboard" method="get">
-    <!--<div class="cf-turnstile" data-sitekey="0x4AAAAAAAzJujce04sJvGLQ"></div>-->
-    <div id="myWidget"></div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit" disabled>次に行く▷</button>
-  </form>
-  <!--<script>
-    function _turnstileCb() {
-      turnstile.render('.cf-turnstile', {
-        callback: function(token) {
-          document.querySelector("button[type='submit']").removeAttribute('disabled');
-        },
-      })
-    }
-  </script>-->
+      <form action="dashboard" method="get">
+        <div id="myWidget"></div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" disabled>次に行く▷</button>
+      </form>
+    </div>
+  </main>
+  
   <script>
     // This function is called when the Turnstile script is loaded and ready to be used.
     // The function name matches the "onload=..." parameter.
