@@ -8,66 +8,70 @@
 </head>
 <body background="../RPisystem.png">
   <main>
-  <div class="content">
-  <button id="start-btn">start</button>
-  <button id="stop-btn">stop</button>
-  <div id="result-div"></div>
+    <div class="content">
+      <button id="start-btn">start</button>
+      <button id="stop-btn">stop</button>
+      <div id="result-div"></div>
 
-  <script>
-    const startBtn = document.querySelector('#start-btn');
-    const stopBtn = document.querySelector('#stop-btn');
-    const resultDiv = document.querySelector('#result-div');
-    
-    // Web Speech APIの音声認識オブジェクトを作成
-    SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-    let recognition = new SpeechRecognition();
-    
-    // 日本語に設定
-    recognition.lang = 'ja-JP';
-    recognition.interimResults = true;  // 暫定結果を取得
-    recognition.continuous = true;      // 連続認識
-    
-    let finalTranscript = '';  // 確定した結果を格納する変数
-    
-    recognition.onresult = (event) => {
-      let interimTranscript = '';  // 暫定結果を格納する変数
-      
-      // 結果をループ処理して確定結果と暫定結果を分ける
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        let transcript = event.results[i][0].transcript;
+      <script>
+        const startBtn = document.querySelector('#start-btn');
+        const stopBtn = document.querySelector('#stop-btn');
+        const resultDiv = document.querySelector('#result-div');
         
-        // 確定した結果
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          // 暫定結果
-          interimTranscript = transcript;
-        }
-      }
+        // Web Speech APIの音声認識オブジェクトを作成
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = new SpeechRecognition();
+        
+        // 日本語に設定
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = true;  // 暫定結果を取得
+        recognition.continuous = true;      // 連続認識
+        
+        let finalTranscript = '';  // 確定した結果を格納する変数
+        let isRecognizing = false; // 音声認識が実行中かどうかのフラグ
+        
+        recognition.onresult = (event) => {
+          let interimTranscript = '';  // 暫定結果を格納する変数
+          
+          // 結果をループ処理して確定結果と暫定結果を分ける
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            let transcript = event.results[i][0].transcript;
+            
+            // 確定した結果
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript;
+            } else {
+              // 暫定結果
+              interimTranscript = transcript;
+            }
+          }
 
-      // 確定した結果と暫定結果を表示する
-      resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
-    };
-    
-    // 「start」ボタンを押した時の処理
-    startBtn.onclick = () => {
-      let start = true;
-      sell();
-    };
-    
-    // 「stop」ボタンを押した時の処理
-    stopBtn.onclick = () => {
-      let start = false;
-      recognition.stop();
-    };
+          // 確定した結果と暫定結果を表示する
+          resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+        };
 
-    function sell () {
-      while(start){
-        recognition.start();
-      }
-    }
-  </script>
-  </div>
+        // 音声認識が終了した時の処理
+        recognition.onend = () => {
+          if (isRecognizing) {
+            recognition.start(); // 認識を再スタート
+          }
+        };
+        
+        // 「start」ボタンを押した時の処理
+        startBtn.onclick = () => {
+          if (!isRecognizing) {
+            isRecognizing = true; // 認識中のフラグを立てる
+            recognition.start(); // 音声認識を開始
+          }
+        };
+        
+        // 「stop」ボタンを押した時の処理
+        stopBtn.onclick = () => {
+          isRecognizing = false; // 認識中のフラグを下げる
+          recognition.stop(); // 音声認識を停止
+        };
+      </script>
+    </div>
   </main>
 </body>
 </html>
