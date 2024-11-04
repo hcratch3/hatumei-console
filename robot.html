@@ -3,43 +3,24 @@
 <head>
   <meta charset="utf-8">
   <title>Firebase Authentication Sample</title>
-
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
 </head>
 <body>
-  <h1>読み込み中です。</h1>
-  <div id="main"></div>
+  <h1>ロボット🤖を倒すのを手伝ってください!</h1>
+  
+<script src="https://cdn.jsdelivr.net/npm/@hcaptcha/vanilla-hcaptcha"></script>
 
-  <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
-        authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
-        projectId: "toyota-hatumei-login-0001",
-        storageBucket: "toyota-hatumei-login-0001.firebasestorage.app",
-        messagingSenderId: "528478791438",
-        appId: "1:528478791438:web:689b9d3a060dc56fbe595f",
-        measurementId: "G-54MQBV693F"
-    };
+<h-captcha id="signupCaptcha"
+           site-key="781559eb-513a-4bae-8d29-d4af340e3624"
+           size="normal"
+           tabindex="0"></h-captcha>
 
-    firebase.initializeApp(firebaseConfig);
+<script>
+    const signupCaptcha = document.getElementById('signupCaptcha');
 
-    firebase.auth().onAuthStateChanged( user => {
-      let h1   = document.querySelector('h1');
-      let main = document.querySelector('#main');
-
-      if ( user != null ){
-        if ( user.emailVerified == false ){
-          h1.innerText   = 'ユーザ登録をしました。';
-          main.innerHTML = user.email + 'に確認メールを送信しました。';
-          user.sendEmailVerification();
-        }else{
-          h1.innerText   = 'ログインに成功しました。';
-          main.innerHTML = user.displayName + 'さんがログインしています。';
-        }
-
-      }else{
-        h1.innerText = 'ログインに失敗しました。';
-      }
+    signupCaptcha.addEventListener('verified', (e) => {
+        console.log('verified event', {token: e.token});
     });
-  </script>
+    signupCaptcha.addEventListener('error', (e) => {
+        console.log('error event', {error: e.error});
+    });
+</script>
