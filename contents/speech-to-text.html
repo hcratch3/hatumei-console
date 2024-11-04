@@ -1,75 +1,64 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>豊田少年少女発明クラブ | ログアウト</title>
-
-  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
-
-  <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
-  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
-
-  <link rel="stylesheet" href="../style.css" />
+  <title>Speech Recognition Example</title>
+</head>
+<body>
+  <main>
+  <div class="content">
+  <button id="start-btn">start</button>
+  <button id="stop-btn">stop</button>
+  <div id="result-div"></div>
 
   <script>
-    // Firebaseの初期化
-    var config = {
-      apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
-      authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
-    };
-    firebase.initializeApp(config);
-    firebase.auth().signOut().then(function () {
-      document.getElementById('loader').innerText = 'ログアウトしました。';
-    }).catch(function (error) {
-      console.log(error);
-      document.getElementById('loader').innerText = 'ログアウトできませんでした。';
-    });
-  </script>
-</head>
-
-<body background="../RPisystem.png">
-  <main>
-    <div class="content">
-      <button id="start-btn">start</button>
-      <button id="stop-btn">stop</button>
-      <div id="result-div"></div>
-
-      <script>
-        // 初期化
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        // 言語設定を日本語に
-        recognition.lang = 'ja-JP';
-        // 解析中の結果を表示する
-        recognition.interimResults = true;
-        // 認識のたびに継続的に結果を返す
-        recognition.continuous = true;
-
-        // 音声認識開始
-        recognition.start();
-
-        // 認識した音声の結果を処理するイベントハンドラー
-        recognition.onresult = (event) => {
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            let results = event.results
-            if (results[i].isFinal) {
-              console.log('解析終了')
-              // 解析が終了したあとの処理
-              setRecogniziedText(event.results[i][0].transcript)
-            } else {
-              console.log('認識中')
-              // 解析中の処理
-              setInputText(event.results[i][0].transcript)
-            }
-          }
+    const startBtn = document.querySelector('#start-btn');
+    const stopBtn = document.querySelector('#stop-btn');
+    const resultDiv = document.querySelector('#result-div');
+    
+    // Web Speech APIの音声認識オブジェクトを作成
+    SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+    let recognition = new SpeechRecognition();
+    
+    // 日本語に設定
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = true;  // 暫定結果を取得
+    recognition.continuous = true;      // 連続認識
+    
+    let finalTranscript = '';  // 確定した結果を格納する変数
+    
+    recognition.onresult = (event) => {
+      let interimTranscript = '';  // 暫定結果を格納する変数
+      
+      // 結果をループ処理して確定結果と暫定結果を分ける
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        let transcript = event.results[i][0].transcript;
+        
+        // 確定した結果
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          // 暫定結果
+          interimTranscript = transcript;
         }
-      </script>
-    </div>
+      }
+
+      // 確定した結果と暫定結果を表示する
+      resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+    };
+    
+    // 「start」ボタンを押した時の処理
+    startBtn.onclick = () => {
+      recognition.start();
+    };
+    
+    // 「stop」ボタンを押した時の処理
+    stopBtn.onclick = () => {
+      recognition.stop();
+    };
+  </script>
+  </div>
   </main>
 </body>
-
 </html>
