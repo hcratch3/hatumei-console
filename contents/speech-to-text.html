@@ -4,71 +4,78 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>豊田少年少女発明クラブ | 文字起こし</title>
-  <link rel="stylesheet" href="../style2.css" />
+  <link rel="stylesheet" href="../style.css" />
 </head>
 <body background="../RPisystem.png">
   <main>
     <div class="content">
       <button id="start-btn">start</button>
       <button id="stop-btn">stop</button>
+      <button id="download-btn">ダウンロード</button>
       <div id="result-div"></div>
 
       <script>
         const startBtn = document.querySelector('#start-btn');
         const stopBtn = document.querySelector('#stop-btn');
+        const downloadBtn = document.querySelector('#download-btn');
         const resultDiv = document.querySelector('#result-div');
-        
-        // Web Speech APIの音声認識オブジェクトを作成
+
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = new SpeechRecognition();
-        
-        // 日本語に設定
+
         recognition.lang = 'ja-JP';
-        recognition.interimResults = true;  // 暫定結果を取得
-        recognition.continuous = true;      // 連続認識
-        
-        let finalTranscript = '';  // 確定した結果を格納する変数
+        recognition.interimResults = false; // 暫定結果は非表示
+        recognition.continuous = true; // 連続認識
+
+        let finalTranscript = ''; // 確定した結果を格納する変数
         let isRecognizing = false; // 音声認識が実行中かどうかのフラグ
-        
+
         recognition.onresult = (event) => {
-          let interimTranscript = '';  // 暫定結果を格納する変数
-          
-          // 結果をループ処理して確定結果と暫定結果を分ける
           for (let i = event.resultIndex; i < event.results.length; i++) {
             let transcript = event.results[i][0].transcript;
-            
-            // 確定した結果
+
+            // 確定した結果の場合
             if (event.results[i].isFinal) {
-              finalTranscript += transcript;
-            } else {
-              // 暫定結果
-              interimTranscript = transcript;
+              const timestamp = new Date().toLocaleTimeString(); // タイムスタンプを取得
+              finalTranscript += `[${timestamp}] ${transcript}\n`; // タイムスタンプ付きで確定結果を追加
+              resultDiv.innerHTML = finalTranscript.replace(/\n/g, "<br>"); // 改行をHTML形式に変換
             }
           }
-
-          // 確定した結果と暫定結果を表示する
-          resultDiv.innerHTML = finalTranscript;
         };
 
-        // 音声認識が終了した時の処理
         recognition.onend = () => {
           if (isRecognizing) {
             recognition.start(); // 認識を再スタート
           }
         };
-        
-        // 「start」ボタンを押した時の処理
+
         startBtn.onclick = () => {
           if (!isRecognizing) {
             isRecognizing = true; // 認識中のフラグを立てる
             recognition.start(); // 音声認識を開始
           }
         };
-        
-        // 「stop」ボタンを押した時の処理
+
         stopBtn.onclick = () => {
           isRecognizing = false; // 認識中のフラグを下げる
           recognition.stop(); // 音声認識を停止
+        };
+
+        downloadBtn.onclick = () => {
+          const now = new Date();
+          const formattedDate = now.toISOString().slice(0, 10).replace(/-/g, ''); // 日付部分
+          const formattedTime = now.toTimeString().slice(0, 8).replace(/:/g, ''); // 時間部分
+          const filename = `${formattedDate}_${formattedTime}.txt`; // 日時を含むファイル名
+
+          const blob = new Blob([finalTranscript], { type: 'text/plain' }); // テキストファイルのBlobを作成
+          const url = URL.createObjectURL(blob); // BlobのURLを作成
+          const a = document.createElement('a'); // ダウンロード用のリンクを作成
+          a.href = url;
+          a.download = filename; // 日時を含むダウンロードするファイル名
+          document.body.appendChild(a); // リンクをドキュメントに追加
+          a.click(); // リンクをクリックしてダウンロードを開始
+          document.body.removeChild(a); // リンクを削除
+          URL.revokeObjectURL(url); // メモリを解放
         };
       </script>
     </div>
