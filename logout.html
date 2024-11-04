@@ -22,21 +22,26 @@
     };
     firebase.initializeApp(config);
     firebase.auth().signOut().then(function() {
-        document.getElementById('loader').innerText = 'サインアウトしました。';
+        document.getElementById('loader').innerText = 'ログアウトしました。';
     }).catch(function(error) {
         console.log(error);
-        document.getElementById('loader').innerText = 'サインアウトできませんでした。';
+        document.getElementById('loader').innerText = 'ログアウトできませんでした。';
     });
   </script>
 </head>
 <body background="RPisystem.png">
-  <div id="firebaseui-auth-container"></div>
-  <div id="loader">Loading...</div>
-  <span>そのままお待ちください。3秒後に移動します。</span>
-  <script>
-    setTimeout(function(){
-        window.location.href = 'index.html';
-    }, 3*1000);
-  </script>
+  <main>
+    <div class="content">
+      <h2>豊田少年少女発明クラブ | ログアウト</h2>
+      <div id="firebaseui-auth-container"></div>
+      <div id="loader">Loading...</div>
+      <span>そのままお待ちください。3秒後に移動します。</span>
+      <script>
+        setTimeout(function(){
+          window.location.href = 'index.html';
+        }, 3*1000);
+      </script>
+    </div>
+  </main>
 </body>
 </html>
