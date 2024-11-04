@@ -40,7 +40,7 @@
               const timestamp = new Date().toLocaleTimeString(); // タイムスタンプを取得
               finalTranscript += `[${timestamp}] ${transcript}\n`; // タイムスタンプ付きで確定結果を追加
               resultDiv.innerHTML = finalTranscript.replace(/\n/g, "<br>"); // 改行をHTML形式に変換
-              resultDiv.innerHTML = "<h1>"+transcript+"</h1>";
+              zimakuDiv.innerHTML = "<h1>"+transcript+"</h1>";
             }
           }
         };
