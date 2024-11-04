@@ -51,13 +51,20 @@
     
     // 「start」ボタンを押した時の処理
     startBtn.onclick = () => {
-      recognition.start();
+      let start = true;
     };
     
     // 「stop」ボタンを押した時の処理
     stopBtn.onclick = () => {
+      let start = false;
       recognition.stop();
     };
+
+    function sell () {
+      while(start){
+        recognition.start();
+      }
+    }
   </script>
   </div>
   </main>
