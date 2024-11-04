@@ -39,37 +39,33 @@
       <div id="result-div"></div>
 
       <script>
-        const startBtn = document.querySelector('#start-btn');
-        const stopBtn = document.querySelector('#stop-btn');
-        const resultDiv = document.querySelector('#result-div');
-
-        SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-        let recognition = new SpeechRecognition();
-
+        // 初期化
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        // 言語設定を日本語に
         recognition.lang = 'ja-JP';
+        // 解析中の結果を表示する
         recognition.interimResults = true;
+        // 認識のたびに継続的に結果を返す
         recognition.continuous = true;
 
-        let finalTranscript = ''; // 確定した(黒の)認識結果
+        // 音声認識開始
+        recognition.start();
 
+        // 認識した音声の結果を処理するイベントハンドラー
         recognition.onresult = (event) => {
-          let interimTranscript = ''; // 暫定(灰色)の認識結果
           for (let i = event.resultIndex; i < event.results.length; i++) {
-            let transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-              finalTranscript += transcript;
+            let results = event.results
+            if (results[i].isFinal) {
+              console.log('解析終了')
+              // 解析が終了したあとの処理
+              setRecogniziedText(event.results[i][0].transcript)
             } else {
-              interimTranscript = transcript;
+              console.log('認識中')
+              // 解析中の処理
+              setInputText(event.results[i][0].transcript)
             }
           }
-          resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
-        }
-
-        startBtn.onclick = () => {
-          recognition.start();
-        }
-        stopBtn.onclick = () => {
-          recognition.stop();
         }
       </script>
     </div>
