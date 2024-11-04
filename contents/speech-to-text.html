@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>豊田少年少女発明クラブ | 文字起こし</title>
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../style2.css" />
 </head>
 <body background="../RPisystem.png">
   <main>
@@ -19,6 +19,7 @@
         const stopBtn = document.querySelector('#stop-btn');
         const downloadBtn = document.querySelector('#download-btn');
         const resultDiv = document.querySelector('#result-div');
+        const zimakuDiv = document.querySelector('#zimaku');
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = new SpeechRecognition();
@@ -39,6 +40,7 @@
               const timestamp = new Date().toLocaleTimeString(); // タイムスタンプを取得
               finalTranscript += `[${timestamp}] ${transcript}\n`; // タイムスタンプ付きで確定結果を追加
               resultDiv.innerHTML = finalTranscript.replace(/\n/g, "<br>"); // 改行をHTML形式に変換
+              resultDiv.innerHTML = "<h1>"+transcript+"</h1>";
             }
           }
         };
@@ -80,5 +82,8 @@
       </script>
     </div>
   </main>
+  <footer>
+    <div id="zimaku"></div>
+  </footer>
 </body>
 </html>
