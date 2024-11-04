@@ -70,23 +70,23 @@
 
 <script>
     var config = {
-        apiKey: "<API_KEY>",
-        authDomain: "<PROJECT_ID>.firebaseapp.com",
+        apiKey: "AIzaSyAz9Sk2JEjKWn7882ehr-paId_YtvkFJEg",
+        authDomain: "toyota-hatumei-login-0001.firebaseapp.com",
     };
     firebase.initializeApp(config);
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            // User is signed in.
+            document.getElementById('userH').innerText = user;
             console.log('auth user', user);
         } else {
-            // No user is signed in.
+            
         }
     });
 </script>
 
 <header>
-    <h1>Dashboard</h1><p><p id="user">USER</p><a href="logout.html">ログアウト</a></p>
+    <h1>Dashboard</h1><p><p id="userH">USER</p><a href="logout.html">ログアウト</a></p>
 </header>
 
 <main>
