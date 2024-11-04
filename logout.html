@@ -20,10 +20,10 @@
     };
     firebase.initializeApp(config);
     firebase.auth().signOut().then(function() {
-        document.getElementById('loader').innerText = 'サインアウトしました。<br><span>この画面は閉じても良いです。</span>';
+        document.getElementById('loader').innerHtml = 'サインアウトしました。<br><span>この画面は閉じても良いです。</span>';
     }).catch(function(error) {
         console.log(error);
-        document.getElementById('loader').innerText = 'サインアウトできませんでした。<br><span>この画面は閉じても良いです。</span>';
+        document.getElementById('loader').innerHtml = 'サインアウトできませんでした。<br><span>この画面は閉じても良いです。</span>';
     });
   </script>
 </head>
