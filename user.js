@@ -7,6 +7,6 @@ firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged((user) => {  if (user) {
     // ログイン状態の場合
   } else {
-    // 未ログイン状態の場合
+    window.location.href = 'index.html';
   }
 });
