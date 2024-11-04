@@ -68,8 +68,25 @@
 </head>
 <body background="RPisystem.png">
 
+<script>
+    var config = {
+        apiKey: "<API_KEY>",
+        authDomain: "<PROJECT_ID>.firebaseapp.com",
+    };
+    firebase.initializeApp(config);
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            console.log('auth user', user);
+        } else {
+            // No user is signed in.
+        }
+    });
+</script>
+
 <header>
-    <h1>Dashboard</h1><a href="logout.html">ログアウト</a>
+    <h1>Dashboard</h1><p><p id="user">USER</p><a href="logout.html">ログアウト</a></p>
 </header>
 
 <main>
