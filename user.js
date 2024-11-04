@@ -8,6 +8,6 @@ firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     console.log('auth user', user);
   } else {
-    setTimeout(function(){window.location.href = 'index.html';}, 1);
+    window.location.href = 'index.html';
   }
 });
