@@ -12,6 +12,8 @@
       <button id="start-btn">start</button>
       <button id="stop-btn">stop</button>
       <button id="download-btn">ダウンロード</button>
+      <button id="full">□</button>
+      <button id="normal">✙</button>
       <div id="result-div" style="height:100px;overflow: auto;">上位5件を表示します</div>
     </div>
   </main>
@@ -83,6 +85,15 @@
           document.body.removeChild(a); // リンクを削除
           URL.revokeObjectURL(url); // メモリを解放
         };
+
+        document.getElementById('full').addEventListener('click', function(){
+				  document.body.requestFullscreen();				
+			  });
+
+			  // フルスクリーン解除
+		  	document.getElementById('normal').addEventListener('click', function(){
+			  	document.exitFullscreen();
+		  	});
       </script>
 </body>
 </html>
