@@ -6,7 +6,7 @@ const token = new SkyWayAuthToken({
   exp: nowInSec() + 60 * 60 * 24,
   scope: {
     app: {
-      id: 'ApplicationID',
+      id: '7c04d8ef-ce52-43cf-9304-048bd2920ad7',
       turn: true,
       actions: ['read'],
       channels: [
@@ -41,7 +41,7 @@ const token = new SkyWayAuthToken({
       ],
     },
   },
-}).encode('SecretKEY');
+}).encode('Sv42bWy1u6Xl6LrJpe1FgDfZzjXfj5Fvm0c6H9rSC7k=');
 
 //console.log(token);
 
@@ -62,22 +62,13 @@ const init = async () => {
         }
 
         const context = await SkyWayContext.Create(token);
+
+        const room = await SkyWayRoom.FindOrCreate(context, {
+          type: "sfu",
+          name: roomIdInput.value,
+        });
+        const me = await room.join();
+        userIdDisplay.innerText = me.id;
     }
-}
-
-document.getElementById("stream").onclick = async () => {
-    if (roomIdInput.value === '') {
-        alert('ルームIDを入力してください');
-        return;
-    }
-
-    const context = await SkyWayContext.Create(token);
-
-    const room = await SkyWayRoom.FindOrCreate(context, {
-        type: "sfu",
-        name: roomIdInput.value,
-    });
-    const me = await room.join();
-    userIdDisplay.innerText = me.id;
 }
 
