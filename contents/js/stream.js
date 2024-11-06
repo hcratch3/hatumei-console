@@ -69,6 +69,10 @@ const init = async () => {
         });
         const me = await room.join();
         userIdDisplay.innerText = me.id;
+
+        await me.publish(video); // 映像を配信
+        await me.publish(audio); // 音声を配信
     }
 }
 
+window.onload = init;
