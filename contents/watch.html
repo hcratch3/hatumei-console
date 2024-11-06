@@ -1,0 +1,21 @@
+  <!DOCTYPE html>
+  <html>
+      <head>
+          <meta charset="UTF-8" />
+          <title>ライブ配信</title>
+          <script src="https://cdn.jsdelivr.net/npm/@skyway-sdk/room/dist/skyway_room-latest.js"></script>
+          <script src="js/watch.js"></script>
+
+      </head>
+      <body>
+          <div>
+              ルームID: <input id="room-id" type="text" />
+
+              <button id="stream">視聴開始</button>
+
+          </div>
+
+          <video id="local-video" width="400px" muted playsinline></video>
+
+      </body>
+  </html>
