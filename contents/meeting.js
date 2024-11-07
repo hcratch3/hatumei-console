@@ -1,14 +1,12 @@
 const { nowInSec, SkyWayAuthToken, SkyWayContext, SkyWayRoom, SkyWayStreamFactory, uuidV4 } = skyway_room;
 
-import { appId, secret } from '../../../env';
-
 const token = new SkyWayAuthToken({
   jti: uuidV4(),
   iat: nowInSec(),
   exp: nowInSec() + 60 * 60 * 24,
   scope: {
     app: {
-      id: appId,
+      id: 7c04d8ef-ce52-43cf-9304-048bd2920ad7,
       turn: true,
       actions: ['read'],
       channels: [
@@ -43,7 +41,7 @@ const token = new SkyWayAuthToken({
 
     }
   }
-}).encode(secret);
+}).encode(Sv42bWy1u6Xl6LrJpe1FgDfZzjXfj5Fvm0c6H9rSC7k=);
 
 void (async () => {
   const localVideo = document.getElementById('local-video');
