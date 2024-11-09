@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,6 +41,7 @@
       <!-- モード切り替えボタン -->
       <button id="switchToJoystickBtn">Switch to Joystick Mode</button>
       <button id="switchToTiltBtn">Switch to Tilt Mode</button>
+      <button id="switchToDpadBtn">Switch to Dpad Mode</button>
 
       <!-- ジョイスティックエリア -->
       <div id="joystickArea">
@@ -50,6 +51,16 @@
       <p>Tilt Control: <span id="tiltValue">Off</span></p>
       <button id="enableTiltBtn">Enable Tilt</button>
       <button id="disableTiltBtn">Disable Tilt</button>
+
+      <!-- 十字キーエリア -->
+      <div id="dpad">
+        <button class="dpad-btn" id="upBtn">▲</button>
+        <button class="dpad-btn" disabled></button> <!-- 真ん中は空白 -->
+        <button class="dpad-btn" id="rightBtn">▶</button>
+        <button class="dpad-btn" id="leftBtn">◀</button>
+        <button class="dpad-btn" disabled></button> <!-- 真ん中は空白 -->
+        <button class="dpad-btn" id="downBtn">▼</button>
+      </div>
     </div>
   </main>
 
@@ -204,6 +215,30 @@
       updateDirection(direction);  // 方向を表示
     }
 
+    document.getElementById('upBtn').addEventListener('click', () => {
+      if (mode !== 'dpad') return;
+      sendCommand('F');  // 前進
+      updateDirection('Forward');
+    });
+
+    document.getElementById('downBtn').addEventListener('click', () => {
+      if (mode !== 'dpad') return;
+      sendCommand('B');  // 後退
+      updateDirection('Backward');
+    });
+
+    document.getElementById('leftBtn').addEventListener('click', () => {
+      if (mode !== 'dpad') return;
+      sendCommand('L');  // 左折
+      updateDirection('Left');
+    });
+
+    document.getElementById('rightBtn').addEventListener('click', () => {
+      if (mode !== 'dpad') return;
+      sendCommand('R');  // 右折
+      updateDirection('Right');
+    });
+
     // モード切り替え
     document.getElementById('switchToJoystickBtn').addEventListener('click', () => {
       mode = 'joystick';
@@ -215,6 +250,12 @@
       mode = 'tilt';
       updateDirection('Stopped');  // 傾き操作に切り替えたら停止状態に
       console.log('Switched to Tilt Mode');
+    });
+
+    document.getElementById('switchToDpadBtn').addEventListener('click', () => {
+      mode = 'dpad';
+      updateDirection('Stopped');  // 十字キーに切り替えたら停止状態に
+      console.log('Switched to D-Pad Mode');
     });
   </script>
 </body>
