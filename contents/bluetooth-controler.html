@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Car Controller with Joystick & Tilt</title>
+  <style>
+    #joystickArea {
+      width: 200px;
+      height: 200px;
+      background-color: lightgray;
+      border-radius: 50%;
+      position: relative;
+      touch-action: none;
+      margin-bottom: 20px;
+    }
+    #joystick {
+      width: 50px;
+      height: 50px;
+      background-color: darkgray;
+      border-radius: 50%;
+      position: absolute;
+      left: 75px;
+      top: 75px;
+    }
+    #status {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="contents">
+      <h1>ESP32 Car Controller with Joystick & Tilt</h1>
+
+      <!-- 現在の進行方向の表示 -->
+      <p id="status">Current Direction: <span id="currentDirection">Stopped</span></p>
+
+      <!-- モード切り替えボタン -->
+      <button id="switchToJoystickBtn">Switch to Joystick Mode</button>
+      <button id="switchToTiltBtn">Switch to Tilt Mode</button>
+
+      <!-- ジョイスティックエリア -->
+      <div id="joystickArea">
+        <div id="joystick"></div>
+      </div>
+
+      <p>Tilt Control: <span id="tiltValue">Off</span></p>
+      <button id="enableTiltBtn">Enable Tilt</button>
+      <button id="disableTiltBtn">Disable Tilt</button>
+    </div>
+  </main>
+
+  <script>
+    let device;
+    let server;
+    let service;
+    let characteristic;
+    let joystick = document.getElementById('joystick');
+    let joystickArea = document.getElementById('joystickArea');
+    let joystickPos = { x: 75, y: 75 };
+    let tiltEnabled = false;
+    let mode = 'joystick';  // モード（ジョイスティック or 傾き）
+    let currentDirection = 'Stopped';
+
+    // Bluetooth接続
+    async function connectToDevice() {
+      try {
+        console.log('Requesting Bluetooth Device...');
+        device = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'ESP32 Car Controller' }],
+          optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b']
+        });
+
+        console.log('Connecting to GATT Server...');
+        server = await device.gatt.connect();
+
+        console.log('Getting Service...');
+        service = await server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+
+        console.log('Getting Characteristic...');
+        characteristic = await service.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+      } catch (error) {
+        console.error('Error: ', error);
+      }
+    }
+
+    // コマンド送信関数
+    async function sendCommand(command) {
+      if (!device) {
+        await connectToDevice();
+      }
+      const encoder = new TextEncoder();
+      const value = encoder.encode(command);
+      await characteristic.writeValue(value);
+    }
+
+    // 進行方向の表示を更新
+    function updateDirection(direction) {
+      currentDirection = direction;
+      document.getElementById('currentDirection').innerText = direction;
+    }
+
+    // ジョイスティック操作
+    joystickArea.addEventListener('pointermove', (event) => {
+      if (mode !== 'joystick') return;
+
+      event.preventDefault();
+      let rect = joystickArea.getBoundingClientRect();
+      let x = event.clientX - rect.left - 25;
+      let y = event.clientY - rect.top - 25;
+
+      // エリア内に制限
+      const radius = 75;
+      const distance = Math.sqrt(x * x + y * y);
+      if (distance > radius) {
+        x = (x / distance) * radius;
+        y = (y / distance) * radius;
+      }
+
+      joystick.style.left = `${x + radius}px`;
+      joystick.style.top = `${y + radius}px`;
+
+      joystickPos.x = x + radius;
+      joystickPos.y = y + radius;
+
+      sendJoystickCommand();
+    });
+
+    // ジョイスティック位置に基づくコマンド送信
+    function sendJoystickCommand() {
+      const centerX = 75;
+      const centerY = 75;
+      const deltaX = joystickPos.x - centerX;
+      const deltaY = joystickPos.y - centerY;
+
+      let command = 'S';  // デフォルトは停止
+      let direction = 'Stopped';  // 初期値
+
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        if (deltaY < -20) {
+          command = 'F';  // 前進
+          direction = 'Forward';
+        } else if (deltaY > 20) {
+          command = 'B';  // 後退
+          direction = 'Backward';
+        }
+      } else {
+        if (deltaX < -20) {
+          command = 'L';  // 左折
+          direction = 'Left';
+        } else if (deltaX > 20) {
+          command = 'R';  // 右折
+          direction = 'Right';
+        }
+      }
+
+      sendCommand(command);
+      updateDirection(direction);  // 方向を表示
+    }
+
+    // 傾きセンサーの制御
+    document.getElementById('enableTiltBtn').addEventListener('click', () => {
+      if (window.DeviceOrientationEvent) {
+        tiltEnabled = true;
+        window.addEventListener('deviceorientation', handleTilt, true);
+        document.getElementById('tiltValue').innerText = 'On';
+      }
+    });
+
+    document.getElementById('disableTiltBtn').addEventListener('click', () => {
+      tiltEnabled = false;
+      window.removeEventListener('deviceorientation', handleTilt, true);
+      document.getElementById('tiltValue').innerText = 'Off';
+    });
+
+    // 傾きセンサーによる車の操作
+    function handleTilt(event) {
+      if (!tiltEnabled || mode !== 'tilt') return;
+
+      const threshold = 15;  // 傾きを検出する閾値
+      let command = 'S';     // デフォルトは停止
+      let direction = 'Stopped';
+
+      if (event.beta < -threshold) {
+        command = 'F';  // 前進（スマホを前に傾ける）
+        direction = 'Forward';
+      } else if (event.beta > threshold) {
+        command = 'B';  // 後退（スマホを後ろに傾ける）
+        direction = 'Backward';
+      }
+
+      if (event.gamma < -threshold) {
+        command = 'L';  // 左折（スマホを左に傾ける）
+        direction = 'Left';
+      } else if (event.gamma > threshold) {
+        command = 'R';  // 右折（スマホを右に傾ける）
+        direction = 'Right';
+      }
+
+      sendCommand(command);
+      updateDirection(direction);  // 方向を表示
+    }
+
+    // モード切り替え
+    document.getElementById('switchToJoystickBtn').addEventListener('click', () => {
+      mode = 'joystick';
+      updateDirection('Stopped');  // ジョイスティックに切り替えたら停止状態に
+      console.log('Switched to Joystick Mode');
+    });
+
+    document.getElementById('switchToTiltBtn').addEventListener('click', () => {
+      mode = 'tilt';
+      updateDirection('Stopped');  // 傾き操作に切り替えたら停止状態に
+      console.log('Switched to Tilt Mode');
+    });
+  </script>
+</body>
+</html>
