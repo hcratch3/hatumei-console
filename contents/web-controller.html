@@ -171,31 +171,62 @@
       text-align: center;
       margin: auto;
       margin-top: 40px;
-    }
+  }
 
-    /**　コントローラーの左側と真ん中と右側をくっつける**/
+  /**　コントローラーの左側と真ん中と右側をくっつける**/
 
-    .spf-controller {
-      display: flex;
-    }
+  .spf-controller {
+    display: flex;
+  }
 
-    .spf-controller .controller-center {
-      margin-left: -80px;
-      margin-right: -80px;
-    }
+  .spf-controller .controller-center {
+    margin-left: -80px;
+    margin-right: -80px;
+  }
 
-    .spf-controller .controller-center {
-      z-index: 1;
-    } 
+  .spf-controller .controller-center {
+    z-index: 1;
+  } 
 
-    .spf-controller .controller-left {
-      z-index: 2;
-    }
+  .spf-controller .controller-left {
+    z-index: 2;
+  }
 
-    .spf-controller .controller-right {
-      z-index: 2;
-    }
+  .spf-controller .controller-right {
+    z-index: 2;
+  }
 
+  /** 追記_RボタンLボタン **/
+  .ear {
+    position: absolute;
+
+    width: 80px;
+    height: 40px;
+
+    background-color: rgba(66, 86, 123, 0.5);
+
+    border-top-right-radius: 30%;
+    border-top-left-radius: 30%;
+  }
+
+  .ear-left {
+    transform: rotate(-30deg);
+    top: 0px;
+    left: 0px;
+  }
+
+  .ear-right {
+    transform: rotate(30deg);
+    top: 0px;
+    right: 0px;
+  }
+
+  .spf-controller {
+    position: relative;
+    width:360px;
+    
+    margin:30px 30px;
+  }
   </style>
   <link rel="stylesheet" href="../style.css" />
 </head>
@@ -203,6 +234,8 @@
   <main>
     <div class="content">
       <div class="spf-controller">
+        <button class="btn ear ear-left"></button>
+        <button class="btn ear ear-right"></button>
         <div class="controller-left">
           <div class="cross-layout">
             <button class="position-top btn cross-key-btn"><span class="top-mark">▲</span></button>
