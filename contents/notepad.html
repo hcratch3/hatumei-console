@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メモ帳</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 10px;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .settingsvar {
+            height: 70px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h2>メモ帳</h2>
+</header>
+<div class="settingsvar">
+    設定：<button id="setpass" onclick="setpass()" title="このプログラムを開始するときにパスワードを設定します。">パスワードを設定する</button><button onclick="DataAllDelete()" title="ローカルストレージ内に記録されているこのプログラムのデータをすべて削除します">データをすべて削除</button>
+</div>
+<main>
+    <p>保存する内容を入力</p>
+    <input type="text" id="data">
+    <button onclick="saveToData()">保存</button>
+    <div id="showdata" class="container" style="height: 400px; resize: both;"></div>
+</main>
+<footer>
+    <p>©2024</p>
+</footer>
+<script>
+    let btn = document.getElementById("setpass");
+    let container = document.getElementById("showdata");
+    let textbox = document.getElementById("data");
+    let storageAvailable = undefined;
+
+    function DataAllDelete() {
+        let noBot = Math.floor(Math.random() * 9999999999) + 10000;
+        let enterBot = prompt(`続行するにはこの操作がロボットでないことを確認するため${noBot}と入力してください`)
+        if (enterBot === `${noBot}` && confirm("ローカルストレージ内に記録されているデータをすべて削除します。よろしいですか？")) {
+            localStorage.clear();
+            displayStoredData();
+        }
+    }
+    let retryCount = 0;
+function checkPasswordAndExecute(callback) {
+    if (localStorage.getItem('password_')) {
+        let passwords = prompt("パスワードを入力");
+        let storedPass = localStorage.getItem('password_');
+        if (passwords === storedPass) {
+            callback();
+        } else {
+            alert("パスワードが違います。");
+            retryCount++;
+            if (retryCount < 3) { 
+                checkPasswordAndExecute(callback);
+            } else {
+                alert("再試行の回数が上限に達しました。");
+                window.close();
+            }
+        }
+    } else {
+    callback();
+    }
+}
+    function getJapanTime() {
+        let now = new Date();
+        let japanTime = new Intl.DateTimeFormat('ja-JP', {
+            timeZone: 'Asia/Tokyo',
+            hour12: false,
+            hourCycle: 'h23',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        }).format(now);
+        return japanTime;
+    }
+
+    function checkLocalStorageAvailability() {
+        if (typeof(Storage) !== "undefined") {
+            storageAvailable = true;
+        } else {
+            storageAvailable = false;
+            alert("現在ローカルストレージを利用できません。（自動的にこのタブは閉じられます。）");
+            window.close();
+        }
+    }
+
+    function saveToData() {
+        checkPasswordAndExecute(function() {
+            checkLocalStorageAvailability();
+            if (storageAvailable) {
+                let currentTime = getJapanTime();
+                let inputValue = textbox.value;
+                localStorage.setItem(currentTime, inputValue);
+                displayStoredData();
+            }
+        });
+    }
+
+    function displayStoredData() {
+        container.innerHTML = "";
+
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            let value = localStorage.getItem(key);
+            if (key === "password_") continue;
+            let elem = document.createElement("div");
+            elem.textContent = `内容: ${value}\n${key} に保存されました`;
+
+            let deleteBtn = document.createElement('button');
+            deleteBtn.textContent = "削除";
+            deleteBtn.onclick = function () {
+                deleteStorageData(key);
+            };
+
+            elem.appendChild(deleteBtn);
+            container.appendChild(elem);
+        }
+    }
+
+    function deleteStorageData(key) {
+        checkPasswordAndExecute(function() {
+            let noBot = Math.floor(Math.random() * 9999999) + 1000;
+            let noBotverify = prompt(`この操作がロボットによるものではないということを証明するために、${noBot}と入力してください`);
+            if (noBotverify === `${noBot}` && confirm("このメモを削除しますか？")) {
+                localStorage.removeItem(key);
+                displayStoredData();
+                alert("このメモを削除しました。");
+            }
+        });
+    }
+
+    function setpass() {
+        let pass = prompt("パスワードを入力（作成しない場合、間違えて押した場合は空白で送信してください）");
+        if (pass.trim() !== '') {
+            localStorage.setItem("password_", pass);
+            alert("パスワードが設定されました。");
+        } else {
+            if(localStorage.key("password_")) {
+            let resetpass = localStorage.key("password_");
+            localStorage.removeItem(resetpass);
+            alert("パスワードをリセットしました。");
+        } else {
+            if(localStorage.key("password_")) {
+            alert("パスワードをリセットしました");
+            } else{
+            alert("パスワードの設定をキャンセルしました。");
+        }
+    }
+    }
+        checkpassSetting();
+}
+function checkpassSetting() {
+    if(localStorage.key("password_")) {
+        btn.textContent = "パスワードを変更、リセット";
+        btn.title = "現在のパスワードを変更またはリセットします。";
+
+    } else {
+        btn.textContent = "パスワードを設定";
+        btn.title = "パスワードを設定します（パスワード忘れた場合プログラムを起動できません）";
+    }
+}
+    window.onload = function () {
+        checkLocalStorageAvailability();
+        displayStoredData();
+        checkpassSetting();
+        checkPasswordAndExecute(function() {
+        });
+    };
+</script>
+</body>
+</html>
